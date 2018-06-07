@@ -29,7 +29,8 @@
   ],
   "platforms": [
     "android",
-    "ios"
+    "ios",
+    "windows"
   ],
   "dependencies": {
     "q": "*"

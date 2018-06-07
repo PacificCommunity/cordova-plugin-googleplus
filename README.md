@@ -80,6 +80,11 @@ $ keytool -exportcert -keystore <path-to-debug-or-production-keystore> -list -v 
 ```
 Login on Android will use the accounts signed in on the user's device.
 
+### Windows
+Windows platform require a valid `APPLICATION_CLIENT_ID` generated at [Google Developer Console](https://console.developers.google.com/). It has to be either for `Android` or `iOS`. Again, ensure Package name (or Bundle ID for iOS) is similar to your app id (see above *Before you proceed*), it will be checked for the redirect URI.
+
+The `APPLICATION_CLIENT_ID` can reuse the same OAuth Client as `REVERSED_CLIENT_ID`.
+
 #### Publishing your app in Google Play Store
 
 Google re-signs your app with a different certificate when you publish it in the Play Store. Once your app is published, copy the SHA-1 fingerprint of the "App signing certificate", found in the "App signing" section under "Release Management", in [Google Play Console](https://play.google.com/apps/publish/). Paste this fingerprint in the Release OAuth client ID in [Google Credentials Manager](https://console.developers.google.com/apis/credentials).
@@ -127,6 +132,7 @@ For the (stable) NPM Version:
 <plugin name="cordova-plugin-googleplus" source="npm">
   <variable name="REVERSED_CLIENT_ID" value="myreversedclientid" />
   <variable name="WEB_APPLICATION_CLIENT_ID" value="mywebapplicationclientid" />
+  <variable name="APPLICATION_CLIENT_ID" value="myClientid" />
 </plugin>
 ```
 
@@ -135,6 +141,7 @@ For the latest version from Git (not recommended):
 <plugin spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus.git" source="git">
   <variable name="REVERSED_CLIENT_ID" value="myreversedclientid" />
   <variable name="WEB_APPLICATION_CLIENT_ID" value="mywebapplicationclientid" />
+  <variable name="APPLICATION_CLIENT_ID" value="myClientid" />
 <plugin>
 ```
 
@@ -292,6 +299,7 @@ As stated before, this plugin is all about user authentication and identity, so 
 - A: Make sure you are using a Virtual Device running with a **Google APIs target and/or a Google APIs CPU**!
 
 ## 10. Changelog
+- 5.4.0: Windows platform added.
 - 5.3.0: Browser platform added.
 - 5.0.3: Added the convenience method `getSigningCertificateFingerprint` to retrieve the Android cert fingerprint which is required in the Google Developer Console.
 - 5.0.2: Require linking against `SafariServices` and `CoreText` frameworks on iOS as per Google's recommendation. Added `loginHint` on iOS.

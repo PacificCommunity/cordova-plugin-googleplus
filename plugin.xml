@@ -119,4 +119,25 @@
     <hook type="after_prepare" src="hooks/browser/after_prepare.js" />
   </platform>
 
+  <!-- windows universal apps -->
+  <platform name="windows">
+    <js-module src="src/windows/GooglePlusProxy.js" name="GooglePlusProxy">
+      <clobbers target="GooglePlus" />
+    </js-module>
+    <js-module src="src/windows/GAuth.js" name="GAuth">
+      <clobbers target="GAuth" />
+    </js-module>
+    <config-file target="config.xml" parent="/*">
+      <feature name="GooglePlus">
+        <param name="onload" value="true" />
+      </feature>
+      <access origin="https://accounts.google.com/*" />
+    </config-file>
+
+    <preference name="APPLICATION_CLIENT_ID" />
+
+    <!-- after_prepare hook to populate APP_ID -->
+    <hook type="after_prepare" src="hooks/windows/after_prepare.js" />
+  </platform>
+
 </plugin>

@@ -97,6 +97,7 @@ Login on Android will use the accounts signed in on the user's device.
 
 To set up Google Play Services version, you can use PLAY_SERVICES_VERSION parameter (with 11.8.0 value by default). It is useful in order to avoid conflicts with another plugins which use any other different version of Google Play Service, because they MUST be the same version.
 
+
 #### Publishing your app in Google Play Store
 
 Google re-signs your app with a different certificate when you publish it in the Play Store. Once your app is published, copy the SHA-1 fingerprint of the "App signing certificate", found in the "App signing" section under "Release Management", in [Google Play Console](https://play.google.com/apps/publish/). Paste this fingerprint in the Release OAuth client ID in [Google Credentials Manager](https://console.developers.google.com/apis/credentials).
@@ -104,6 +105,11 @@ Google re-signs your app with a different certificate when you publish it in the
 ### Web Client Id
 
 If you want to get an `idToken` or `serverAuthCode` back from the Sign In Process, you will need to pass the client ID for your project's web application. This can be found on your project's API credentials page on the [Google Developer's Console](https://console.developers.google.com/).
+
+### Windows
+Windows platform require a valid `APPLICATION_CLIENT_ID` generated at [Google Developer Console](https://console.developers.google.com/). It has to be either for `Android` or `iOS`. Again, ensure Package name (or Bundle ID for iOS) is similar to your app id (see above *Before you proceed*), it will be checked for the redirect URI.
+
+The `APPLICATION_CLIENT_ID` can reuse the same OAuth Client as `REVERSED_CLIENT_ID`.
 
 ## 4. Installation (PhoneGap CLI / Cordova CLI)
 This plugin is compatible with:
@@ -144,6 +150,7 @@ For the (stable) NPM Version:
 <plugin name="cordova-plugin-googleplus" source="npm">
   <variable name="REVERSED_CLIENT_ID" value="myreversedclientid" />
   <variable name="WEB_APPLICATION_CLIENT_ID" value="mywebapplicationclientid" />
+  <variable name="APPLICATION_CLIENT_ID" value="myClientid" />
 </plugin>
 ```
 
@@ -152,6 +159,7 @@ For the latest version from Git (not recommended):
 <plugin spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus.git" source="git">
   <variable name="REVERSED_CLIENT_ID" value="myreversedclientid" />
   <variable name="WEB_APPLICATION_CLIENT_ID" value="mywebapplicationclientid" />
+  <variable name="APPLICATION_CLIENT_ID" value="myClientid" />
 <plugin>
 ```
 
@@ -420,6 +428,7 @@ Again we have 2 options to whitelist them. Projects that use only the _Google Cl
 
 
 ## 11. Changelog
+- 5.4.0: Windows platform added.
 - 5.3.2: Allow override of Play services version via `PLAY_SERVICES_VERSION`.
 - 5.3.1: Capacitor compatibility.
 - 5.3.0: Browser platform added.

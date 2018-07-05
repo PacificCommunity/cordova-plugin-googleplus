@@ -5,7 +5,12 @@ var Uri = Windows.Foundation.Uri;
 
 var defaults = {
     clientId: 'CLIENT_ID',
-    redirectUri: Windows.ApplicationModel.Package.current.id.name + ':/oauth2redirect',
+    createRedirectUri: function(protocol) {
+        if(!protocol) {
+            protocol = Windows.ApplicationModel.Package.current.id.name;
+        }
+        return protocol  + ':/oauth2redirect';
+    },
     scope: 'openid profile email'
 }
 
@@ -52,7 +57,7 @@ RestClient.prototype.initHttpClient = function () {
 RestClient.prototype.init = function (options) {
     if (!options) options = {};
     this.clientId = options.clientId || this.clientId || defaults.clientId;
-    this.redirectUri = options.redirectUri || this.redirectUri || defaults.redirectUri;
+    this.redirectUri = options.redirectUri || this.redirectUri || defaults.createRedirectUri(getReversedClientId(this.clientId));
     this.scope = options.scope || this.scope || defaults.scope;
     if(!this.httpClient) {
         this.initHttpClient();
@@ -82,7 +87,7 @@ RestClient.prototype.authorizeAsync = function (challenge, options) {
     endURI = new Uri(this.redirectUri);
 
     // test code
-    // return Windows.System.Launcher.launchUriAsync(authURI);
+    return Windows.System.Launcher.launchUriAsync(authURI);
 
     var task = Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(
         Windows.Security.Authentication.Web.WebAuthenticationOptions.None,
@@ -234,6 +239,17 @@ AuthInstance.prototype.disconnect = function () {
 function parseTokens(responseString) {
     var tokens = JSON.parse(responseString);
     return tokens;
+}
+
+function reverseUri(uri) {
+    return uri.split('.').reverse().join('.');
+}
+
+function getReversedClientId(clientId) {
+    if(uri.startWith('com.')) {
+        return clientId;
+    }
+    return reverseUri(clientId);
 }
 
 function getCallbackParams(uri) {

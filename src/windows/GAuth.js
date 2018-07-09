@@ -27,12 +27,11 @@ var sha = Cryptography.Core.HashAlgorithmProvider.openAlgorithm(Cryptography.Cor
 
 function GAuth() {
     this._authInstance = null;
-    this._restClient = new RestClient();
 }
 
 GAuth.prototype.init = function (options) {
     if (!options) options = {};
-    this._restClient.init(options);
+    this._restClient = new RestClient(options);
 }
 
 GAuth.prototype.getAuthInstance = function () {
@@ -46,26 +45,16 @@ GAuth.prototype.getAuthInstance = function () {
  * provide access to Google Oauth REST API
  */
 
-function RestClient() {
-    this.init();
-}
-
-RestClient.prototype.initHttpClient = function () {
-    this.httpClient = new Http.HttpClient();
-}
-
-RestClient.prototype.init = function (options) {
+function RestClient(options) {
     if (!options) options = {};
-    this.clientId = options.clientId || this.clientId || defaults.clientId;
-    this.redirectUri = options.redirectUri || this.redirectUri || defaults.createRedirectUri(getReversedClientId(this.clientId));
-    this.scope = options.scope || this.scope || defaults.scope;
-    if(!this.httpClient) {
-        this.initHttpClient();
-    } 
+    this.httpClient = new Http.HttpClient();
+    this.clientId = options.clientId || defaults.clientId;
+    this.redirectUri = options.redirectUri || defaults.createRedirectUri(getReversedClientId(this.clientId));
+    this.scope = options.scope || defaults.scope;
 }
 
 RestClient.prototype.reset = function () {
-    this.initHttpClient();
+    this.httpClient = new Http.HttpClient();
 }
 
 RestClient.prototype.authorizeAsync = function (challenge, options) {
@@ -87,7 +76,8 @@ RestClient.prototype.authorizeAsync = function (challenge, options) {
     endURI = new Uri(this.redirectUri);
 
     // test code
-    return Windows.System.Launcher.launchUriAsync(authURI);
+    // return 
+    // Windows.System.Launcher.launchUriAsync(authURI);
 
     var task = Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(
         Windows.Security.Authentication.Web.WebAuthenticationOptions.None,
@@ -182,30 +172,24 @@ RestClient.prototype.addBearerHeader = function (accessToken) {
 
 /**
  * Manage auth process.
- * Try to follow gapi.js methods.
  */
 
 function AuthInstance(restClient) {
-    var self = this;
     this.restClient = restClient;
-    self._signedIn = false;
-    this.isSignedIn = {
-        get: function () {
-            return self._signedIn;
-        }
-    }
-
-    this.init();
+    this.reset();
 }
 
-AuthInstance.prototype.init = function () {
+AuthInstance.prototype.reset = function () {
     this._signedIn = false;
-    this.getAuthResponse = null;
     this.profile = null;
 
     this.accessToken = null;
     this.refreshToken = null;
     this.restClient.reset();
+}
+
+AuthInstance.prototype.isSignedIn = function () {
+    return this._signedIn;
 }
 
 AuthInstance.prototype.signIn = function (options) {
@@ -229,11 +213,11 @@ AuthInstance.prototype.signIn = function (options) {
 }
 
 AuthInstance.prototype.signOut = function () {
-    this.init();
+    this.reset();
 }
 
 AuthInstance.prototype.disconnect = function () {
-    this.init();
+    this.reset();
 }
 
 function parseTokens(responseString) {
@@ -246,7 +230,7 @@ function reverseUri(uri) {
 }
 
 function getReversedClientId(clientId) {
-    if(uri.startWith('com.')) {
+    if(clientId.startsWith('com.')) {
         return clientId;
     }
     return reverseUri(clientId);

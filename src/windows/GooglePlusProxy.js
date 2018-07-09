@@ -43,13 +43,13 @@ var GooglePlusProxy = {
     },
 
     trySilentLogin: function (success, error) {
-        GooglePlusProxy.updateSigninStatus(gauth.getAuthInstance().isSignedIn.get(), success, error);
+        GooglePlusProxy.updateSigninStatus(gauth.getAuthInstance().isSignedIn(), success, error);
     },
 
     login: function (success, error, options) {
         gauth.getAuthInstance().signIn(options)
             .then(function () {
-                GooglePlusProxy.updateSigninStatus(gauth.getAuthInstance().isSignedIn.get(), success, error);
+                GooglePlusProxy.updateSigninStatus(gauth.getAuthInstance().isSignedIn(), success, error);
             }, function (err) {
                 error(err);
             });

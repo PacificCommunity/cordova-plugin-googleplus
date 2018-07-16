@@ -56,12 +56,12 @@ var GooglePlusProxy = {
     },
 
     logout: function (success, error) {
-        gapi.auth2.getAuthInstance().signOut();
+        gauth.getAuthInstance().signOut();
         success();
     },
 
     disconnect: function (success, error) {
-        gapi.auth2.getAuthInstance().disconnect();
+        gauth.getAuthInstance().disconnect();
         success();
     },
 

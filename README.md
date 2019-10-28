@@ -1,6 +1,18 @@
 # Google Sign-In Cordova/PhoneGap Plugin
-by [Eddy Verbruggen](http://twitter.com/eddyverbruggen),
-with great assistance from Sam Muggleworth ([PointSource, LLC](https://github.com/PointSource))
+
+[![NPM version][npm-image]][npm-url]
+[![Downloads][downloads-image]][npm-url]
+[![Twitter Follow][twitter-image]][twitter-url]
+
+[build-status]:https://travis-ci.org/EddyVerbruggen/cordova-plugin-googleplus.svg?branch=master
+[build-url]:https://travis-ci.org/EddyVerbruggen/cordova-plugin-googleplus
+[npm-image]:http://img.shields.io/npm/v/cordova-plugin-googleplus.svg
+[npm-url]:https://npmjs.org/package/cordova-plugin-googleplus
+[downloads-image]:http://img.shields.io/npm/dm/cordova-plugin-googleplus.svg
+[twitter-image]:https://img.shields.io/twitter/follow/eddyverbruggen.svg?style=social&label=Follow%20me
+[twitter-url]:https://twitter.com/eddyverbruggen
+
+> ⚠️ From plugin version 6.0.0 the minimum required cordova-ios version is 4.5.0. Need to use a lower cordova-ios version? Use plugin version 5.3.2 or lower.
 
 ## 0. Index
 
@@ -9,11 +21,12 @@ with great assistance from Sam Muggleworth ([PointSource, LLC](https://github.co
 3. [Google API setup](#3-google-api-setup)
 4. [Installation (CLI / Plugman)](#4-installation-phonegap-cli--cordova-cli)
 5. [Installation (PhoneGap Build)](#5-installation-phonegap-build)
-6. [Usage](#6-usage)
-7. [Exchanging the `idToken`](#7-exchanging-the-idtoken)
-8. [Exchanging the `serverAuthCode`](#8-exchanging-the-serverauthcode)
-9. [Troubleshooting](#9-troubleshooting)
-10. [Changelog](#10-changelog)
+6. [Installation (iOS and Cocoapods)](#6-installation-ios-and-cocoapods)
+7. [Usage](#7-usage)
+8. [Exchanging the `idToken`](#8-exchanging-the-idtoken)
+9. [Exchanging the `serverAuthCode`](#9-exchanging-the-serverauthcode)
+10. [Troubleshooting](#10-troubleshooting)
+11. [Changelog](#11-changelog)
 
 ## 1. Description
 
@@ -68,7 +81,7 @@ The `REVERSED_CLIENT_ID` is also known as the "iOS URL Scheme" on the Developer'
 Login on iOS takes the user to a [SafariViewController](https://developer.apple.com/library/ios/documentation/SafariServices/Reference/SFSafariViewController_Ref/) through the Google SDK, instead of the separate Safari browser.
 
 ### Android
-To configure Android, [generate a configuration file here](https://developers.google.com/mobile/add?platform=android&cntapi=signin). Once Google Sign-In is enabled Google will automatically create necessary credentials in Developer Console. There is no need to add the generated google-services.json file into your cordova project.
+To configure Android, [generate a configuration file here](https://developers.google.com/mobile/add?platform=android&cntapi=signin). Enable Google Sign-In and add an Android App to add the SHA1 fingerprint. Once Google Sign-In is enabled Google will automatically create necessary credentials in Developer Console for web and Android. There is no need to add the generated google-services.json file into your cordova project. You may need to configure the consent screen.
 
 Make sure you execute the `keytool` steps as explained [here](https://developers.google.com/drive/android/auth) or authentication will fail (do this for both release and debug keystores).
 
@@ -80,10 +93,10 @@ $ keytool -exportcert -keystore <path-to-debug-or-production-keystore> -list -v 
 ```
 Login on Android will use the accounts signed in on the user's device.
 
-### Windows
-Windows platform require a valid `APPLICATION_CLIENT_ID` generated at [Google Developer Console](https://console.developers.google.com/). It has to be either for `Android` or `iOS`. Again, ensure Package name (or Bundle ID for iOS) is similar to your app id (see above *Before you proceed*), it will be checked for the redirect URI.
+#### Integrating Google Play Services
 
-The `APPLICATION_CLIENT_ID` can reuse the same OAuth Client as `REVERSED_CLIENT_ID`.
+To set up Google Play Services version, you can use PLAY_SERVICES_VERSION parameter (with 11.8.0 value by default). It is useful in order to avoid conflicts with another plugins which use any other different version of Google Play Service, because they MUST be the same version.
+
 
 #### Publishing your app in Google Play Store
 
@@ -92,6 +105,11 @@ Google re-signs your app with a different certificate when you publish it in the
 ### Web Client Id
 
 If you want to get an `idToken` or `serverAuthCode` back from the Sign In Process, you will need to pass the client ID for your project's web application. This can be found on your project's API credentials page on the [Google Developer's Console](https://console.developers.google.com/).
+
+### Windows
+Windows platform require a valid `APPLICATION_CLIENT_ID` generated at [Google Developer Console](https://console.developers.google.com/). It has to be either for `Android` or `iOS`. Again, ensure Package name (or Bundle ID for iOS) is similar to your app id (see above *Before you proceed*), it will be checked for the redirect URI.
+
+The `APPLICATION_CLIENT_ID` can reuse the same OAuth Client as `REVERSED_CLIENT_ID`.
 
 ## 4. Installation (PhoneGap CLI / Cordova CLI)
 This plugin is compatible with:
@@ -145,7 +163,23 @@ For the latest version from Git (not recommended):
 <plugin>
 ```
 
-## 6. Usage
+## 6. Installation (iOS and Cocoapods)
+
+This plugin use the [CocoaPods dependency manager](https://cocoapods.org) in order to satisfy the iOS Google SignIn SDK library dependencies.
+
+Therefore please make sure you have Cocoapods installed in your iOS build environment - setup instructions can be found [here](https://cocoapods.org/). Also make sure your local Cocoapods repo is up-to-date by running `pod repo update`.
+
+If building your project in Xcode, you need to open `YourProject.xcworkspace` (not `YourProject.xcodeproj`) so both your Cordova app project and the Pods project will be loaded into Xcode.
+
+You can list the pod dependencies in your Cordova iOS project by installing [cocoapods-dependencies](https://github.com/segiddins/cocoapods-dependencies):
+
+```
+sudo gem install cocoapods-dependencies
+cd platforms/ios/
+pod dependencies
+```
+
+## 7. Usage
 Check the [demo app](demo) to get you going quickly, or hurt yourself and follow these steps.
 
 Note that none of these methods should be called before [`deviceready`](https://cordova.apache.org/docs/en/latest/cordova/events/events.deviceready.html) has fired.
@@ -257,7 +291,7 @@ window.plugins.googleplus.disconnect(
 );
 ```
 
-## 7. Exchanging the `idToken`
+## 8. Exchanging the `idToken`
 
 Google Documentation for Authenticating with a Backend Server
 - [Web](https://developers.google.com/identity/sign-in/web/backend-auth)
@@ -272,7 +306,7 @@ This has several uses. On the client-side, it can be a way to get doubly confirm
 
 If your server-side only needs identity, and not additional account access, this is a secure and simple way to supply that information.
 
-## 8. Exchanging the `serverAuthCode`
+## 9. Exchanging the `serverAuthCode`
 
 Google Documentation for Enabling Server-Side Access
 - [Web](https://developers.google.com/identity/protocols/OAuth2WebServer#handlingresponse)
@@ -281,11 +315,13 @@ Google Documentation for Enabling Server-Side Access
 
 As the above articles mention, the `serverAuthCode` is an item that can be exchanged for an access and refresh token. Unlike the `idToken`, this allows the server-side to have direct access to the users Google account.
 
+Only in the initial login request `serverAuthCode` will be returned. If you wish to receive the token a second time, you can by using logout first.
+
 You have a couple options when it comes to this exchange: you can use the Google REST Apis to get those in the hybrid app itself or you can send the code to your backend server to be exchanged there, using whatever method necessary (Google provides examples for Java, Python, and JS/HTTP).
 
 As stated before, this plugin is all about user authentication and identity, so any use of the user's account beyond that needs to be implemented per use case, per application.
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 - Q: I can't get authentication to work on Android. And why is there no ANDROID API KEY?
 - A: On Android you need to execute the `keytool` steps, see the installation instructions for details.
 
@@ -298,8 +334,103 @@ As stated before, this plugin is all about user authentication and identity, so 
 - Q: Why isn't this working on my Android Emulator???
 - A: Make sure you are using a Virtual Device running with a **Google APIs target and/or a Google APIs CPU**!
 
-## 10. Changelog
+- Q: I'm getting **Error 10**, what do I do?
+- A: This is likely caused by cordova not using the keystore you want to use (e.g. because you generated your own). Please check https://cordova.apache.org/docs/en/latest/guide/platforms/android/#signing-an-app to read how to do this. Some have reported that you need to run `cordova clean` before running the build to resolve error 10.
+
+- Q: I'm getting **Error 16**, what do I do?
+- A: This is always a problem because the signature (or fingerprint) of your android app when signed is not added to the google console (or firebase) OAuth whitelist. Please double check if you did everything required for this. See the mini-guide below.
+
+### Error 16 & app signing mini-guide
+
+First, make sure you fully read and understand the [guide on App Signing from the android documentation](https://developer.android.com/studio/publish/app-signing)!
+
+After/while reading that, double check if you did all steps 1-4 below correctly:
+
+#### 1. Make a keystore
+
+In order to sign your app (on dev or publish) you will need to make a local keystore and key with Android Studio or via terminal. Google has a feature called "Google Play App Signing" where they will keep the key on their server and sign your app for you, but if you use this feature or not, **you will need a local keystore and key either way.**
+
+- If you do not use "Google Play App Signing" → go to 3A
+- If you _do_ use "Google Play App Signing" → go to 3B
+
+#### 2A. Without _Google Play App Signing_
+
+Your local keystore and key will be your official app signing key.
+
+You will need to whitelist the following key fingerprints (in SHA1 format) in Google OAuth settings:
+
+- android default `debug.keystore` key
+- your own created keystore with its key (for App Signing)
+
+#### 2B. With _Google Play App Signing_ enabled
+
+Your local keystore and key will be your "Upload key" and another key for official "App Signing key" is created and managed by Google.
+
+You need to whitelist the following key fingerprints (in SHA1 format) in Google Oauth settings:
+
+- android default `debug.keystore` key
+- your own created keystore with its key (for Uploading)
+- google's App Signing key
+
+#### 3. Get key fingerprints
+
+Get the above keys' fingerprints (in SHA1 format) to be able to whitelist them.
+
+#### A. Debug key
+
+For the android default `debug.keystore` do:
+
+    keytool -exportcert -keystore /Users/myusername/.android/debug.keystore  -list -v
+
+You will see the SHA1 fingerprint for the debug key in terminal. Copy that.
+
+#### B. App signing or Upload key
+
+For the own created keystore with key (either for 2A or 2B) do:
+
+    keytool -exportcert -keystore /path/to/your/key/yourKeystoreFile.keystore  -list -v
+
+You will see the SHA1 fingerprint for the debug key in terminal. Copy that.
+
+#### C. Google's App signing key
+
+Only when _Google Play App Signing_ is enabled (for 2B). You can find the key Google will use to sign your builds in the Google Play Console.
+
+_Requirement:_ You need to have finished the basic info on your android app and then you need to upload a signed APK for internal testing. Once this is uploaded you will be able to access the following menu:
+
+Go to Release Management > App sigining. There you will see
+
+- "App signing certificate" and SHA-1 fingerprint
+- "Upload certificate" and SHA-1 fingerprint
+
+The "Upload" one is (and should be) the same as key B. above. And the "App signing certificate" is the key that Google will use. Copy this one.
+
+#### 4. Whitelist the key fingerprints
+
+Again we have 2 options to whitelist them. Projects that use only the _Google Cloud Platform_ or projects that use _Firebase_.
+
+#### A. Google Cloud Platform projects
+
+(In case you also use Firebase, you can skip this step)
+
+1. Go to [API & Services > credentials](https://console.cloud.google.com/apis/credentials)
+2. Create credentials > OAuth client ID
+3. choose "android" and insert your SHA1
+4. Repeat this for all keys (2 or 3)
+
+#### B. Firebase projects
+
+1. Go to the console > Projects settings
+2. Select your Android app at the bottom. (if you don't have any, add an android app, you can ignore the whole tutorial they give you, it's irrelevant for Cordova apps)
+3. Add the finger prints to the "SHA certificate fingerprints" section.
+4. Double check your Google Cloud console: [API & Services > credentials](https://console.cloud.google.com/apis/credentials) and see that Firebase has added these automatically at the bottom under "OAuth 2.0 client IDs"
+
+
+
+## 11. Changelog
 - 5.4.0: Windows platform added.
+- 5.3.2: Allow override of Play services version via `PLAY_SERVICES_VERSION`.
+- 5.3.1: Capacitor compatibility.
 - 5.3.0: Browser platform added.
 - 5.0.3: Added the convenience method `getSigningCertificateFingerprint` to retrieve the Android cert fingerprint which is required in the Google Developer Console.
 - 5.0.2: Require linking against `SafariServices` and `CoreText` frameworks on iOS as per Google's recommendation. Added `loginHint` on iOS.

@@ -424,5 +424,3 @@ Again we have 2 options to whitelist them. Projects that use only the _Google Cl
 2. Select your Android app at the bottom. (if you don't have any, add an android app, you can ignore the whole tutorial they give you, it's irrelevant for Cordova apps)
 3. Add the finger prints to the "SHA certificate fingerprints" section.
 4. Double check your Google Cloud console: [API & Services > credentials](https://console.cloud.google.com/apis/credentials) and see that Firebase has added these automatically at the bottom under "OAuth 2.0 client IDs"
-
-- 5.4.0: Windows platform added.

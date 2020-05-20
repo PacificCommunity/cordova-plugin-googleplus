@@ -1,5 +1,5 @@
 {
-  "version": "8.2.0",
+  "version": "8.5.0",
   "name": "cordova-plugin-googleplus",
   "cordova_name": "Google SignIn",
   "description": "Use your Google account to authenticate with the app.",
@@ -26,9 +26,9 @@
     "ios",
     "windows"
   ],
-  "dependencies": [
-    "q"
-  ],
+  "dependencies": {
+    "q": "*"
+  },
   "engines": [
     {
       "name": "cordova",
